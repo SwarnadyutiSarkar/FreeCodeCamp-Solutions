@@ -1,0 +1,116 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_function(equation, x_range=(-10, 10), y_range=None, resolution=100):
+    x = np.linspace(x_range[0], x_range[1], resolution)
+    y = eval(equation)  # Evaluate the equation for each x
+    plt.plot(x, y, label=equation)
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title(f'Graph of {equation}')
+    plt.grid(True)
+    plt.legend()
+
+    if y_range:
+        plt.ylim(y_range[0], y_range[1])
+
+    plt.show()
+
+def plot_function_with_table(equation, x_range=(-10, 10), resolution=100):
+    x = np.linspace(x_range[0], x_range[1], resolution)
+    y = eval(equation)  # Evaluate the equation for each x
+    plt.plot(x, y, label=equation)
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title(f'Graph of {equation}')
+    plt.grid(True)
+    plt.legend()
+
+    # Print table of (x, y) values
+    print(f"{'x':<10}{'y':<10}")
+    for xi, yi in zip(x, y):
+        print(f"{xi:<10.2f}{yi:<10.2f}")
+
+    plt.show()
+
+def plot_system_of_equations(eq1, eq2, x_range=(-10, 10), resolution=100):
+    x = np.linspace(x_range[0], x_range[1], resolution)
+    y1 = eval(eq1)  # Evaluate equation 1 for each x
+    y2 = eval(eq2)  # Evaluate equation 2 for each x
+    plt.plot(x, y1, label=eq1)
+    plt.plot(x, y2, label=eq2)
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('System of Equations')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+def zoom_plot(equation, x_range=(-10, 10), y_range=None, resolution=100, zoom_factor=1.5):
+    x_center = (x_range[0] + x_range[1]) / 2
+    x_new_range = (x_center - (x_center - x_range[0]) * zoom_factor,
+                   x_center + (x_range[1] - x_center) * zoom_factor)
+    plot_function(equation, x_range=x_new_range, y_range=y_range, resolution=resolution)
+
+def plot_quadratic_equation(a, b, c):
+    x = np.linspace(-10, 10, 400)
+    y = a * x**2 + b * x + c
+    plt.plot(x, y, label=f'{a}x^2 + {b}x + {c}')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title(f'Quadratic Equation: {a}x^2 + {b}x + {c}')
+    plt.grid(True)
+    plt.legend()
+
+    # Calculate and plot roots and vertex
+    discriminant = b**2 - 4 * a * c
+    if discriminant > 0:
+        x1 = (-b + np.sqrt(discriminant)) / (2 * a)
+        x2 = (-b - np.sqrt(discriminant)) / (2 * a)
+        plt.scatter([x1, x2], [0, 0], color='red', label='Roots')
+        vertex_x = -b / (2 * a)
+        vertex_y = a * vertex_x**2 + b * vertex_x + c
+        plt.scatter(vertex_x, vertex_y, color='green', label='Vertex')
+    elif discriminant == 0:
+        x_vertex = -b / (2 * a)
+        y_vertex = a * x_vertex**2 + b * x_vertex + c
+        plt.scatter(x_vertex, y_vertex, color='green', label='Vertex')
+    else:
+        plt.text(0, np.max(y) * 0.8, 'No real roots', fontsize=12, ha='center')
+
+    plt.legend()
+    plt.show()
+
+def shade_above_below_line(equation, x_range=(-10, 10), resolution=100):
+    x = np.linspace(x_range[0], x_range[1], resolution)
+    y = eval(equation)  # Evaluate the equation for each x
+    plt.plot(x, y, label=equation)
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title(f'Graph of {equation}')
+    plt.grid(True)
+    plt.legend()
+
+    plt.fill_between(x, y, where=(y >= 0), color='green', alpha=0.3)
+    plt.fill_between(x, y, where=(y <= 0), color='red', alpha=0.3)
+
+    plt.show()
+
+# Example usage:
+equation1 = 'x**2 - 4'
+plot_function_with_table(equation1)
+
+equation2 = '3*x + 2'
+zoom_plot(equation2, zoom_factor=1.2)
+
+eq1 = '2*x - 4'
+eq2 = '3*x + 2'
+plot_system_of_equations(eq1, eq2)
+
+a = 1
+b = 2
+c = -3
+plot_quadratic_equation(a, b, c)
+
+equation3 = 'x**3 - 2*x + 1'
+shade_above_below_line(equation3)

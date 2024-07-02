@@ -1,0 +1,33 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+def scatter_plot_game(num_points=5, graph_size=20):
+    # Generate random points
+    x = np.random.randint(-graph_size, graph_size, num_points)
+    y = np.random.randint(-graph_size, graph_size, num_points)
+
+    # Plot the points
+    plt.figure(figsize=(8, 8))
+    plt.scatter(x, y, color='blue', s=100)
+    plt.title('Scatter Plot Game')
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.grid(True)
+    plt.xlim(-graph_size, graph_size)
+    plt.ylim(-graph_size, graph_size)
+
+    # Ask user to input coordinates for each point
+    for i in range(num_points):
+        guess_x = int(input(f"Enter x-coordinate for point {i+1}: "))
+        guess_y = int(input(f"Enter y-coordinate for point {i+1}: "))
+
+        # Check if guess is correct
+        if guess_x == x[i] and guess_y == y[i]:
+            print(f"Point {i+1} correct!")
+        else:
+            print(f"Point {i+1} incorrect. Correct answer: ({x[i]}, {y[i]})")
+
+    plt.show()
+
+# Example usage:
+scatter_plot_game(num_points=5, graph_size=30)
