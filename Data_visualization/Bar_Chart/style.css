@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  #title {
+    font-size: 24px;
+    margin-top: 20px;
+  }
+  
+  .tooltip {
+    position: absolute;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  #chart {
+    margin: 20px auto;
+  }
+  
