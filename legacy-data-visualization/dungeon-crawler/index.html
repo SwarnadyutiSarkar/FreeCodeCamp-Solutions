@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roguelike Dungeon Crawler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    
+    #app {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    #game-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(20, 20px);
+      grid-template-rows: repeat(20, 20px);
+      gap: 1px;
+    }
+    
+    .cell {
+      width: 20px;
+      height: 20px;
+      background-color: #ddd;
+      border: 1px solid #999;
+    }
+    
+    .cell.player {
+      background-color: blue;
+    }
+    
+    .cell.enemy {
+      background-color: red;
+    }
+    
+    .cell.item {
+      background-color: green;
+    }
+    
+    .cell.boss {
+      background-color: black;
+    }
+    
+    .cell.hidden {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Roguelike Dungeon Crawler</h1>
+    <div id="game-container">
+      <div id="game-board"></div>
+    </div>
+    <div id="stats">
+      <p>Health: <span id="health">100</span></p>
+      <p>Level: <span id="level">1</span></p>
+      <p>Weapon: <span id="weapon">Stick</span></p>
+      <p>XP: <span id="xp">0</span></p>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const gameBoard = document.getElementById('game-board');
+      const healthElement = document.getElementById('health');
+      const levelElement = document.getElementById('level');
+      const weaponElement = document.getElementById('weapon');
+      const xpElement = document.getElementById('xp');
+    
+      const boardSize = 20;
+      const gameState = {
+        player: { x: 0, y: 0, health: 100, level: 1, weapon: 'Stick', xp: 0 },
+        items: [],
+        enemies: [],
+        boss: { x: boardSize - 1, y: boardSize - 1, health: 50, level: 5 },
+      };
+    
+      function createBoard() {
+        for (let row = 0; row < boardSize; row++) {
+          for (let col = 0; col < boardSize; col++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell', 'hidden');
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            gameBoard.appendChild(cell);
+          }
+        }
+      }
+    
+      function placePlayer() {
+        const cell = getCell(gameState.player.x, gameState.player.y);
+        cell.classList.add('player');
+        cell.classList.remove('hidden');
+      }
+    
+      function placeItems() {
+        for (let i = 0; i < 5; i++) {
+          const x = Math.floor(Math.random() * boardSize);
+          const y = Math.floor(Math.random() * boardSize);
+          if (!isOccupied(x, y)) {
+            const item = { x, y, type: 'health' };
+            gameState.items.push(item);
+            getCell(x, y).classList.add('item');
+          }
+        }
+      }
+    
+      function placeEnemies() {
+        for (let i = 0; i < 5; i++) {
+          const x = Math.floor(Math.random() * boardSize);
+          const y = Math.floor(Math.random() * boardSize);
+          if (!isOccupied(x, y)) {
+            const enemy = { x, y, health: 20, level: 1 };
+            gameState.enemies.push(enemy);
+            getCell(x, y).classList.add('enemy');
+          }
+        }
+      }
+    
+      function placeBoss() {
+        const cell = getCell(gameState.boss.x, gameState.boss.y);
+        cell.classList.add('boss');
+      }
+    
+      function isOccupied(x, y) {
+        return gameState.items.some(item => item.x === x && item.y === y) ||
+          gameState.enemies.some(enemy => enemy.x === x && enemy.y === y) ||
+          (gameState.boss.x === x && gameState.boss.y === y);
+      }
+    
+      function getCell(x, y) {
+        return gameBoard.querySelector(`.cell[data-row="${x}"][data-col="${y}"]`);
+      }
+    
+      function updateStats() {
+        healthElement.textContent = gameState.player.health;
+        levelElement.textContent = gameState.player.level;
+        weaponElement.textContent = gameState.player.weapon;
+        xpElement.textContent = gameState.player.xp;
+      }
+    
+      function movePlayer(dx, dy) {
+        const newX = gameState.player.x + dx;
+        const newY = gameState.player.y + dy;
+        if (newX >= 0 && newX < boardSize && newY >= 0 && newY < boardSize) {
+          getCell(gameState.player.x, gameState.player.y).classList.remove('player');
+          gameState.player.x = newX;
+          gameState.player.y = newY;
+          placePlayer();
+          revealCells();
+          checkForItem();
+          checkForEnemy();
+          checkForBoss();
+        }
+      }
+    
+      function revealCells() {
+        for (let row = -2; row <= 2; row++) {
+          for (let col = -2; col <= 2; col++) {
+            const x = gameState.player.x + row;
+            const y = gameState.player.y + col;
+            if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
+              getCell(x, y).classList.remove('hidden');
+            }
+          }
+        }
+      }
+    
+      function checkForItem() {
+        const item = gameState.items.find(item => item.x === gameState.player.x && item.y === gameState.player.y);
+        if (item) {
+          gameState.player.health += 20;
+          gameState.items = gameState.items.filter(i => i !== item);
+          getCell(item.x, item.y).classList.remove('item');
+        }
+      }
+    
+      function checkForEnemy() {
+        const enemy = gameState.enemies.find(enemy => enemy.x === gameState.player.x && enemy.y === gameState.player.y);
+        if (enemy) {
+          fightEnemy(enemy);
+        }
+      }
+    
+      function checkForBoss() {
+        if (gameState.player.x === gameState.boss.x && gameState.player.y === gameState.boss.y) {
+          fightBoss();
+        }
+      }
+    
+      function fightEnemy(enemy) {
+        while (gameState.player.health > 0 && enemy.health > 0) {
+          enemy.health -= Math.floor(Math.random() * 10) + gameState.player.level;
+          if (enemy.health > 0) {
+            gameState.player.health -= Math.floor(Math.random() * 5) + enemy.level;
+          }
+        }
+        if (gameState.player.health > 0) {
+          gameState.player.xp += 10;
+          gameState.enemies = gameState.enemies.filter(e => e !== enemy);
+          getCell(enemy.x, enemy.y).classList.remove('enemy');
+          levelUp();
+        } else {
+          alert('Game Over');
+          resetGame();
+        }
+      }
+    
+      function fightBoss() {
+        while (gameState.player.health > 0 && gameState.boss.health > 0) {
+          gameState.boss.health -= Math.floor(Math.random() * 10) + gameState.player.level;
+          if (gameState.boss.health > 0) {
+            gameState.player.health -= Math.floor(Math.random() * 10) + gameState.boss.level;
+          }
+        }
+        if (gameState.player.health > 0) {
+          alert('You Win!');
+          resetGame();
+        } else {
+          alert('Game Over');
+          resetGame();
+        }
+      }
+    
+      function levelUp() {
+        if (gameState.player.xp >= gameState.player.level * 10) {
+          gameState.player.level++;
+          gameState.player.xp = 0;
+        }
+      }
+    
+      function resetGame() {
+        gameState.player = { x: 0, y: 0, health: 100, level: 1, weapon: 'Stick', xp: 0 };
+        gameState.items = [];
+        gameState.enemies = [];
+        gameState.boss = { x: boardSize - 1, y: boardSize - 1, health: 50, level: 5 };
+        gameBoard.innerHTML = '';
+        initializeGame();
+      }
+    
+      function initializeGame() {
+        createBoard();
+        placePlayer();
+        placeItems();
+        placeEnemies();
+        placeBoss();
+        revealCells();
+        updateStats();
+      }
+    
+      document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+          case 'ArrowUp':
+            movePlayer(-1, 0);
+            break;
+          case 'ArrowDown':
+            movePlayer(1, 0);
+            break;
+          case 'ArrowLeft':
+            movePlayer(0, -1);
+            break;
+          case 'ArrowRight':
+            movePlayer(0, 1);
+            break;
+        }
+        updateStats();
+      });
+    
+      initializeGame();
+    });
+  </script>
+</body>
+</html>

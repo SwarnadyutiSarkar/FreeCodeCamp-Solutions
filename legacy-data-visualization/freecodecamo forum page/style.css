@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  #app {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  #forum-posts {
+    margin-top: 20px;
+  }
+  
+  .post {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .post-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .post-info {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .user-links a {
+    margin-right: 5px;
+  }
+  
+  .timestamp {
+    font-size: 12px;
+    color: #666;
+  }
+  

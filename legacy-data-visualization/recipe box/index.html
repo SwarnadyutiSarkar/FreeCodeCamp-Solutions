@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Box</title>
+  <style>
+    /* Add your CSS styling here */
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Recipe Box</h1>
+    <div id="recipe-list"></div>
+    <button id="add-recipe-button">Add Recipe</button>
+    <div id="recipe-form" style="display:none;">
+      <h2>Add Recipe</h2>
+      <form id="add-recipe-form">
+        <label for="recipe-name">Recipe Name:</label>
+        <input type="text" id="recipe-name" required>
+        <label for="recipe-ingredients">Ingredients:</label>
+        <textarea id="recipe-ingredients" required></textarea>
+        <button type="submit">Save Recipe</button>
+        <button type="button" id="cancel-button">Cancel</button>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Add your JavaScript here
+  </script>
+</body>
+</html>

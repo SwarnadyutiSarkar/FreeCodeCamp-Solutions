@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  #graph {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .node {
+    cursor: pointer;
+  }
+  
+  .flag {
+    width: 16px;
+    height: 11px;
+    background-image: url('https://www.flag-sprites.com/sprite.css');
+    background-size: 1600px 1100px;
+    display: inline-block;
+  }
+  
